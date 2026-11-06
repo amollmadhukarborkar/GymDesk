@@ -1,0 +1,44 @@
+@model ContactInput
+@{
+    ViewData["Title"] = "Contact";
+}
+<div class="row g-4">
+    <div class="col-lg-5">
+        <div class="panel">
+            <h1 class="h3">Contact the desk</h1>
+            <p>@ViewData["BusinessName"]</p>
+            <p class="mb-0">@ViewData["City"]</p>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <form id="contact-form" method="post" class="panel" asp-action="Contact">
+            <div id="contact-alert" class="alert alert-danger d-none"></div>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="mb-3">
+                <label class="form-label" asp-for="SenderName"></label>
+                <input class="form-control" asp-for="SenderName" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label" asp-for="SenderEmail"></label>
+                <input class="form-control" asp-for="SenderEmail" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label" asp-for="Body"></label>
+                <textarea class="form-control" asp-for="Body" rows="5"></textarea>
+            </div>
+            <button class="btn btn-dark" type="submit">Send</button>
+        </form>
+    </div>
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $("#contact-form").on("submit", function (event) {
+            var email = $("#SenderEmail").val() || "";
+            if (email.indexOf(String.fromCharCode(64)) < 1) {
+                event.preventDefault();
+                $("#contact-alert").text("Enter a valid email address.").removeClass("d-none");
+            }
+        });
+    </script>
+}

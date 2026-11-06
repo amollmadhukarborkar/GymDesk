@@ -1,0 +1,14 @@
+@model GymProfile
+@{
+    ViewData["Title"] = "Rules";
+}
+<h1 class="h3">House rules</h1>
+<div class="panel">
+    @foreach (var line in (Model.HouseRules ?? "").Split('\n'))
+    {
+        if (!string.IsNullOrWhiteSpace(line))
+        {
+            <p class="mb-2">@line</p>
+        }
+    }
+</div>

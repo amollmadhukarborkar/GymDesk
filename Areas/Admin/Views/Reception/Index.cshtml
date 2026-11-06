@@ -1,0 +1,90 @@
+@model ReceptionPage
+@{
+    ViewData["Title"] = "Reception";
+}
+<h1 class="h3">Reception</h1>
+<div class="row g-4">
+    <div class="col-lg-5">
+        <div class="panel">
+            <label class="form-label" for="lookup-query">Member code or name</label>
+            <div class="input-group">
+                <input class="form-control" id="lookup-query" autocomplete="off" />
+                <button class="btn btn-dark" id="lookup-button" type="button">Look up</button>
+            </div>
+            <div id="lookup-result" class="mt-3"></div>
+            <button class="btn btn-success d-none" id="commit-button" type="button">Check in</button>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <div class="panel">
+            <h2 class="h5">Inside now</h2>
+            <table class="table" id="inside-table">
+                <thead><tr><th>Member</th><th>Since</th><th>Locker</th><th></th></tr></thead>
+                <tbody>
+                    @foreach (var visit in Model.Inside)
+                    {
+                        <tr>
+                            <td>@visit.Member?.FullName <span class="text-secondary">@visit.Member?.MemberCode</span></td>
+                            <td>@visit.CheckedInAt.ToLocalTime().ToString("HH:mm")</td>
+                            <td>@(visit.LockerNumber?.ToString() ?? "—")</td>
+                            <td><button class="btn btn-sm btn-outline-dark checkout" data-id="@visit.MemberId" type="button">Check out</button></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <p id="checkout-note" class="mb-0"></p>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        function showResult(data) {
+            var box = $("#lookup-result").empty();
+            if (!data.found) {
+                box.append($("<p class='text-danger mb-0'></p>").text(data.message));
+                $("#commit-button").addClass("d-none");
+                return;
+            }
+            box.append($("<h2 class='h5 mb-1'></h2>").text(data.name));
+            box.append($("<p class='mb-1'></p>").text(data.memberCode + " · " + data.gender));
+            if (data.passName) {
+                box.append($("<p class='mb-1'></p>").text(data.passName + " · expires " + data.expiresOn + " · visits " + data.visitsRemaining));
+            }
+            box.append($("<p class='mb-0'></p>").text(data.message));
+            if (data.lockerNumber) {
+                box.append($("<p class='fw-bold mb-0'></p>").text("Locker " + data.lockerNumber));
+            }
+            $("#commit-button").toggleClass("d-none", !data.allowed);
+        }
+
+        $("#lookup-button").on("click", function () {
+            $.post("/Admin/Reception/Lookup", { query: $("#lookup-query").val() }, showResult);
+        });
+
+        $("#lookup-query").on("keydown", function (event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                $("#lookup-button").trigger("click");
+            }
+        });
+
+        $("#commit-button").on("click", function () {
+            $.post("/Admin/Reception/Commit", { query: $("#lookup-query").val() }, function (data) {
+                showResult(data);
+                if (data.allowed) {
+                    window.setTimeout(function () { window.location.reload(); }, 700);
+                }
+            });
+        });
+
+        $(".checkout").on("click", function () {
+            var button = $(this);
+            $.post("/Admin/Reception/CheckOut", { memberId: button.data("id") }, function (data) {
+                $("#checkout-note").text(data.message);
+                if (data.ok) {
+                    button.closest("tr").remove();
+                }
+            });
+        });
+    </script>
+}

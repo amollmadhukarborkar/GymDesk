@@ -1,0 +1,41 @@
+@model GymProfile
+@{
+    ViewData["Title"] = "Lobby";
+    Layout = null;
+    var hours = ViewBag.Hours as List<OpeningHour> ?? [];
+    var slots = ViewBag.Slots as List<ClassSlot> ?? [];
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@Model.BusinessName</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body class="p-4">
+    <h1 class="display-5">@Model.BusinessName</h1>
+    <p class="lead">@Model.Tagline</p>
+    <div class="row">
+        <div class="col-md-5">
+            @foreach (var hour in hours)
+            {
+                <div class="board-hours d-flex justify-content-between border-bottom py-2">
+                    <span>@WeekDays.Name(hour.DayOfWeek)</span>
+                    <span>@(hour.IsClosed || hour.OpensAt is null ? "Closed" : $"{hour.OpensAt:HH:mm} – {hour.ClosesAt:HH:mm}")</span>
+                </div>
+            }
+        </div>
+        <div class="col-md-7">
+            @foreach (var slot in slots)
+            {
+                <div class="panel mb-2" style="border-left: 8px solid @slot.ColorHex">
+                    <div class="fs-4">@slot.Title</div>
+                    <div>@slot.DayName · @slot.StartsAt.ToString("HH:mm") – @slot.EndsAt.ToString("HH:mm")</div>
+                </div>
+            }
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,65 @@
+@model ReportPage
+@{
+    ViewData["Title"] = "Reports";
+    var currency = ViewData["Currency"] as string;
+    var maxRevenue = Model.MonthlyRevenue.Count == 0 ? 1 : Model.MonthlyRevenue.Max(item => item.Amount);
+    if (maxRevenue <= 0) { maxRevenue = 1; }
+}
+<h1 class="h3">Reports</h1>
+<div class="row g-3 mb-4">
+    <div class="col-md-3"><div class="stat-card p-3"><div class="text-secondary">Members</div><div class="fs-4">@Model.MemberCount</div></div></div>
+    <div class="col-md-3"><div class="stat-card p-3"><div class="text-secondary">Inside now</div><div class="fs-4">@Model.InsideCount</div></div></div>
+    <div class="col-md-3"><div class="stat-card p-3"><div class="text-secondary">Active passes</div><div class="fs-4">@Model.ActivePassCount</div></div></div>
+    <div class="col-md-3"><div class="stat-card p-3"><div class="text-secondary">Average visit</div><div class="fs-4">@Model.AverageWorkoutMinutes min</div></div></div>
+</div>
+<div class="row g-3">
+    <div class="col-md-4">
+        <div class="panel">
+            <h2 class="h5">Today</h2>
+            <p>Cash @Money.Format(Model.CashToday, currency)</p>
+            <p class="mb-0">Card @Money.Format(Model.CardToday, currency)</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="panel">
+            <h2 class="h5">Members by gender</h2>
+            @foreach (var row in Model.Genders)
+            {
+                <p class="mb-1">@row.Label · @((int)row.Amount)</p>
+            }
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="panel">
+            <h2 class="h5">Passes ending within 7 days</h2>
+            <button class="btn btn-sm btn-outline-dark mb-2" id="show-expiring" type="button">Show list</button>
+            <ul id="expiring-list" class="d-none">
+                @foreach (var line in Model.ExpiringSoon)
+                {
+                    <li>@line</li>
+                }
+            </ul>
+            <form method="post" asp-action="Remind">
+                <button class="btn btn-dark btn-sm" type="submit">Email reminders</button>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="panel mt-3">
+    <h2 class="h5">Revenue by month</h2>
+    @foreach (var month in Model.MonthlyRevenue)
+    {
+        var width = (int)Math.Round(month.Amount / maxRevenue * 100);
+        <div class="mb-2">
+            <div class="d-flex justify-content-between"><span>@month.Label</span><span>@Money.Format(month.Amount, currency)</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width:@width%"></div></div>
+        </div>
+    }
+</div>
+@section Scripts {
+    <script>
+        $("#show-expiring").on("click", function () {
+            $("#expiring-list").toggleClass("d-none");
+        });
+    </script>
+}

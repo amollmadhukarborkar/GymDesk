@@ -1,0 +1,25 @@
+@model Member
+@{
+    ViewData["Title"] = "Member card";
+}
+<div class="panel text-center mx-auto" style="max-width: 420px">
+    @if (!string.IsNullOrEmpty(Model.PhotoPath))
+    {
+        <img src="@Model.PhotoPath" alt="" class="rounded-circle mb-3" width="96" height="96" style="object-fit:cover" />
+    }
+    <h1 class="h4">@Model.FullName</h1>
+    <p class="member-code" id="member-code">@Model.MemberCode</p>
+    <button class="btn btn-outline-dark" id="copy-code" type="button">Copy code</button>
+    <p class="text-secondary mt-3 mb-0">Show this code at reception.</p>
+</div>
+@section Scripts {
+    <script>
+        $("#copy-code").on("click", function () {
+            var code = $("#member-code").text();
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(code);
+            }
+            $(this).text("Copied");
+        });
+    </script>
+}

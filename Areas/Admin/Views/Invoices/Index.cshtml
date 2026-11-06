@@ -1,0 +1,21 @@
+@model List<Invoice>
+@{
+    ViewData["Title"] = "Invoices";
+}
+<h1 class="h3">Invoices</h1>
+<input class="form-control mb-3" data-table-filter="#admin-invoices" placeholder="Filter invoices" />
+<table class="table bg-white" id="admin-invoices">
+    <thead><tr><th>When</th><th>Member</th><th>Description</th><th>Amount</th><th>Method</th></tr></thead>
+    <tbody>
+        @foreach (var invoice in Model)
+        {
+            <tr>
+                <td>@invoice.IssuedAt.ToLocalTime().ToString("dd MMM yyyy HH:mm")</td>
+                <td>@invoice.Member?.FullName</td>
+                <td>@invoice.Description</td>
+                <td>@Money.Format(invoice.Amount, ViewData["Currency"] as string)</td>
+                <td>@invoice.PaymentChannel</td>
+            </tr>
+        }
+    </tbody>
+</table>

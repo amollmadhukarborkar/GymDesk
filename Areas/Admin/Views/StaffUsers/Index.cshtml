@@ -1,0 +1,43 @@
+@model List<StaffUser>
+@{
+    ViewData["Title"] = "Staff";
+}
+<h1 class="h3">Staff</h1>
+<form method="post" asp-action="Create" class="panel mb-4">
+    <div class="row g-2">
+        <div class="col-md-3"><input class="form-control" name="FirstName" placeholder="First name" required /></div>
+        <div class="col-md-3"><input class="form-control" name="LastName" placeholder="Last name" required /></div>
+        <div class="col-md-2"><input class="form-control" name="UserName" placeholder="Username" required /></div>
+        <div class="col-md-2"><input class="form-control" name="Password" type="password" placeholder="Password" required /></div>
+        <div class="col-md-2 form-check mt-2">
+            <input class="form-check-input" type="checkbox" name="IsManager" value="true" id="is-manager" />
+            <input type="hidden" name="IsManager" value="false" />
+            <label class="form-check-label" for="is-manager">Manager</label>
+        </div>
+    </div>
+    <button class="btn btn-dark mt-3" type="submit">Add staff</button>
+</form>
+<table class="table bg-white">
+    <thead><tr><th>Name</th><th>Username</th><th>Role</th><th>New password</th><th></th></tr></thead>
+    <tbody>
+        @foreach (var staff in Model)
+        {
+            <tr>
+                <td>@staff.FullName</td>
+                <td>@staff.UserName</td>
+                <td>@(staff.IsManager ? "Manager" : "Staff")</td>
+                <td>
+                    <form method="post" asp-action="Reset" asp-route-id="@staff.Id" class="d-flex gap-2">
+                        <input class="form-control form-control-sm" name="Password" type="password" required />
+                        <button class="btn btn-sm btn-outline-dark" type="submit">Reset</button>
+                    </form>
+                </td>
+                <td>
+                    <form method="post" asp-action="Delete" asp-route-id="@staff.Id" data-confirm="Remove this staff account?">
+                        <button class="btn btn-sm btn-outline-danger" type="submit">Remove</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

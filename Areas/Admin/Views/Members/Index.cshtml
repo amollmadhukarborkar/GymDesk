@@ -1,0 +1,28 @@
+@model List<Member>
+@{
+    ViewData["Title"] = "Members";
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Members</h1>
+</div>
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-6"><input class="form-control" name="q" value="@ViewBag.Query" placeholder="Search name, email, or code" /></div>
+    <div class="col-auto"><button class="btn btn-dark" type="submit">Search</button></div>
+</form>
+<input class="form-control mb-3" data-table-filter="#member-table" placeholder="Filter this list" />
+<table class="table bg-white" id="member-table">
+    <thead><tr><th>Code</th><th>Name</th><th>Email</th><th>Confirmed</th><th>Balance</th><th></th></tr></thead>
+    <tbody>
+        @foreach (var member in Model)
+        {
+            <tr>
+                <td>@member.MemberCode</td>
+                <td>@member.FullName</td>
+                <td>@member.Email</td>
+                <td>@(member.IsConfirmed ? "Yes" : "No")</td>
+                <td>@Money.Format(member.AccountBalance, ViewData["Currency"] as string)</td>
+                <td><a asp-action="Edit" asp-route-id="@member.Id">Edit</a></td>
+            </tr>
+        }
+    </tbody>
+</table>

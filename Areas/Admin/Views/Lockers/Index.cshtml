@@ -1,0 +1,39 @@
+@model List<Locker>
+@{
+    ViewData["Title"] = "Lockers";
+}
+<h1 class="h3">Lockers</h1>
+<form method="post" asp-action="Create" class="row g-2 mb-4">
+    <div class="col-md-3"><input class="form-control" name="LockerNumber" type="number" min="1" placeholder="Number" required /></div>
+    <div class="col-md-3">
+        <select class="form-select" name="Gender">
+            <option>Female</option>
+            <option>Male</option>
+        </select>
+    </div>
+    <div class="col-auto"><button class="btn btn-dark" type="submit">Add locker</button></div>
+</form>
+<table class="table bg-white">
+    <thead><tr><th>Number</th><th>Room</th><th>In use by</th><th></th></tr></thead>
+    <tbody>
+        @foreach (var locker in Model)
+        {
+            <tr>
+                <td>@locker.LockerNumber</td>
+                <td>@locker.Gender</td>
+                <td>@(locker.OccupiedByMember?.FullName ?? "Free")</td>
+                <td>
+                    @if (locker.OccupiedByMemberId is not null)
+                    {
+                        <form method="post" asp-action="Release" asp-route-id="@locker.Id" class="d-inline">
+                            <button class="btn btn-sm btn-outline-dark" type="submit">Release</button>
+                        </form>
+                    }
+                    <form method="post" asp-action="Delete" asp-route-id="@locker.Id" class="d-inline" data-confirm="Remove this locker?">
+                        <button class="btn btn-sm btn-outline-danger" type="submit">Remove</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,18 @@
+@model List<MembershipPlan>
+@{
+    ViewData["Title"] = "Plans";
+}
+<h1 class="h3 mb-3">Membership plans</h1>
+<div class="row g-3">
+    @foreach (var plan in Model)
+    {
+        <div class="col-md-4">
+            <article class="panel h-100">
+                <h2 class="h5">@plan.Name</h2>
+                <p class="fs-4">@Money.Format(plan.Price, ViewData["Currency"] as string)</p>
+                <p>Valid for @plan.ValidDays days.</p>
+                <p class="mb-0">@(plan.VisitAllowance is null ? "Unlimited visits while the pass is valid." : $"{plan.VisitAllowance} visits included.")</p>
+            </article>
+        </div>
+    }
+</div>

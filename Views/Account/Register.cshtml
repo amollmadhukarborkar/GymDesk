@@ -1,0 +1,40 @@
+@model RegisterInput
+@{
+    ViewData["Title"] = "Join";
+}
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <form method="post" enctype="multipart/form-data" class="panel" asp-action="Register">
+            <h1 class="h3">Join @ViewData["BusinessName"]</h1>
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="row">
+                <div class="col-md-6 mb-3"><label class="form-label" asp-for="FirstName"></label><input class="form-control" asp-for="FirstName" /></div>
+                <div class="col-md-6 mb-3"><label class="form-label" asp-for="LastName"></label><input class="form-control" asp-for="LastName" /></div>
+            </div>
+            <div class="mb-3"><label class="form-label" asp-for="Email"></label><input class="form-control" asp-for="Email" /></div>
+            <div class="row">
+                <div class="col-md-6 mb-3"><label class="form-label" asp-for="Password"></label><input class="form-control" asp-for="Password" /></div>
+                <div class="col-md-6 mb-3"><label class="form-label" asp-for="ConfirmPassword"></label><input class="form-control" asp-for="ConfirmPassword" /></div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label" asp-for="Gender"></label>
+                    <select class="form-select" asp-for="Gender">
+                        <option>Female</option>
+                        <option>Male</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3"><label class="form-label" asp-for="BirthDate"></label><input class="form-control" asp-for="BirthDate" type="date" /></div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 mb-3"><label class="form-label" asp-for="City"></label><input class="form-control" asp-for="City" /></div>
+                <div class="col-md-5 mb-3"><label class="form-label" asp-for="Street"></label><input class="form-control" asp-for="Street" /></div>
+                <div class="col-md-3 mb-3"><label class="form-label" asp-for="HouseNumber"></label><input class="form-control" asp-for="HouseNumber" /></div>
+            </div>
+            <div class="mb-3"><label class="form-label" asp-for="Photo">Photo, optional</label><input class="form-control" asp-for="Photo" type="file" accept="image/*" /></div>
+            <button class="btn btn-dark" type="submit">Create account</button>
+        </form>
+    </div>
+</div>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

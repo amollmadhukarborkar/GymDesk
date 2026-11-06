@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Desk</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    @Html.AntiForgeryToken()
+    <div class="desk-shell">
+        <aside class="desk-nav">
+            <a class="desk-brand" asp-area="" asp-controller="Home" asp-action="Index">@ViewData["BusinessName"]</a>
+            <p class="desk-user">@User.Identity?.Name</p>
+            <a asp-area="Admin" asp-controller="Reception" asp-action="Index">Reception</a>
+            <a asp-area="Admin" asp-controller="Members" asp-action="Index">Members</a>
+            <a asp-area="Admin" asp-controller="Sales" asp-action="Index">Sales</a>
+            <a asp-area="Admin" asp-controller="Plans" asp-action="Index">Plans</a>
+            <a asp-area="Admin" asp-controller="Products" asp-action="Index">Products</a>
+            <a asp-area="Admin" asp-controller="Invoices" asp-action="Index">Invoices</a>
+            <a asp-area="Admin" asp-controller="Trainers" asp-action="Index">Trainers</a>
+            <a asp-area="Admin" asp-controller="Schedule" asp-action="Index">Schedule</a>
+            <a asp-area="Admin" asp-controller="Reports" asp-action="Index">Reports</a>
+            <a asp-area="Admin" asp-controller="Lockers" asp-action="Index">Lockers</a>
+            <a asp-area="Admin" asp-controller="Hours" asp-action="Index">Hours</a>
+            <a asp-area="Admin" asp-controller="Messages" asp-action="Index">Messages</a>
+            <a asp-area="Admin" asp-controller="Activity" asp-action="Index">Activity</a>
+            @if (User.IsInRole(AppRoles.Manager))
+            {
+                <a asp-area="Admin" asp-controller="StaffUsers" asp-action="Index">Staff</a>
+                <a asp-area="Admin" asp-controller="Settings" asp-action="Index">Settings</a>
+            }
+            <form method="post" asp-area="" asp-controller="Account" asp-action="Logout" class="mt-3">
+                <button class="btn btn-outline-light btn-sm w-100" type="submit">Sign out</button>
+            </form>
+        </aside>
+        <section class="desk-main">
+            <partial name="_Alerts" />
+            @RenderBody()
+        </section>
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

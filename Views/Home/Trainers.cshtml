@@ -1,0 +1,23 @@
+@model List<Trainer>
+@{
+    ViewData["Title"] = "Trainers";
+}
+<h1 class="h3 mb-3">Trainers</h1>
+<div class="row g-3">
+    @foreach (var trainer in Model)
+    {
+        <div class="col-md-6">
+            <article class="panel h-100 d-flex gap-3">
+                @if (!string.IsNullOrEmpty(trainer.PhotoPath))
+                {
+                    <img src="@trainer.PhotoPath" alt="" class="rounded" width="96" height="96" style="object-fit:cover" />
+                }
+                <div>
+                    <h2 class="h5">@trainer.FullName</h2>
+                    <p>@trainer.Biography</p>
+                    <p class="mb-0">One hour @Money.Format(trainer.HourlyRate, ViewData["Currency"] as string) · Ten sessions @Money.Format(trainer.TenSessionRate, ViewData["Currency"] as string)</p>
+                </div>
+            </article>
+        </div>
+    }
+</div>

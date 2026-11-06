@@ -1,0 +1,35 @@
+@model SettingsInput
+@{
+    ViewData["Title"] = "Settings";
+}
+<h1 class="h3">Settings</h1>
+<form method="post" class="panel">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="row g-3">
+        <div class="col-md-6"><label class="form-label" asp-for="BusinessName"></label><input class="form-control" asp-for="BusinessName" /></div>
+        <div class="col-md-6"><label class="form-label" asp-for="Tagline"></label><input class="form-control" asp-for="Tagline" /></div>
+        <div class="col-12"><label class="form-label" asp-for="About"></label><textarea class="form-control" asp-for="About" rows="3"></textarea></div>
+        <div class="col-12"><label class="form-label" asp-for="HouseRules"></label><textarea class="form-control" asp-for="HouseRules" rows="5"></textarea></div>
+        <div class="col-md-3"><label class="form-label" asp-for="Country"></label><input class="form-control" asp-for="Country" /></div>
+        <div class="col-md-3"><label class="form-label" asp-for="City"></label><input class="form-control" asp-for="City" /></div>
+        <div class="col-md-4"><label class="form-label" asp-for="Street"></label><input class="form-control" asp-for="Street" /></div>
+        <div class="col-md-2"><label class="form-label" asp-for="HouseNumber"></label><input class="form-control" asp-for="HouseNumber" /></div>
+        <div class="col-md-4"><label class="form-label" asp-for="Phone"></label><input class="form-control" asp-for="Phone" /></div>
+        <div class="col-md-4"><label class="form-label" asp-for="Email"></label><input class="form-control" asp-for="Email" /></div>
+        <div class="col-md-2"><label class="form-label" asp-for="Capacity"></label><input class="form-control" asp-for="Capacity" /></div>
+        <div class="col-md-2"><label class="form-label" asp-for="CurrencyCode"></label><input class="form-control" asp-for="CurrencyCode" /></div>
+        <div class="col-12">
+            <div class="form-check"><input class="form-check-input" asp-for="AutoConfirmMembers" /><label class="form-check-label" asp-for="AutoConfirmMembers">Confirm new members immediately</label></div>
+            <div class="form-check"><input class="form-check-input" asp-for="AcceptCash" /><label class="form-check-label" asp-for="AcceptCash">Accept cash</label></div>
+            <div class="form-check"><input class="form-check-input" asp-for="AcceptCard" /><label class="form-check-label" asp-for="AcceptCard">Accept card</label></div>
+            <div class="form-check"><input class="form-check-input" asp-for="AcceptBalance" /><label class="form-check-label" asp-for="AcceptBalance">Accept account balance</label></div>
+        </div>
+        <div class="col-12"><label class="form-label" asp-for="CardTerminalNote"></label><input class="form-control" asp-for="CardTerminalNote" /></div>
+        <div class="col-md-4"><label class="form-label" asp-for="SmtpHost"></label><input class="form-control" asp-for="SmtpHost" /></div>
+        <div class="col-md-2"><label class="form-label" asp-for="SmtpPort"></label><input class="form-control" asp-for="SmtpPort" /></div>
+        <div class="col-md-3"><label class="form-label" asp-for="SmtpUser"></label><input class="form-control" asp-for="SmtpUser" /></div>
+        <div class="col-md-3"><label class="form-label" asp-for="SmtpPassword">SMTP password</label><input class="form-control" asp-for="SmtpPassword" placeholder="Leave blank to keep" /></div>
+        <div class="col-12"><div class="form-check"><input class="form-check-input" asp-for="SmtpUseTls" /><label class="form-check-label" asp-for="SmtpUseTls">Use TLS</label></div></div>
+    </div>
+    <button class="btn btn-dark mt-3" type="submit">Save settings</button>
+</form>

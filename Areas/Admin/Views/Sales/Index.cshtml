@@ -1,0 +1,115 @@
+@model SalePage
+@{
+    ViewData["Title"] = "Sales";
+    var currency = ViewData["Currency"] as string;
+}
+<h1 class="h3">Sales</h1>
+<div class="row g-4">
+    <div class="col-lg-5">
+        <div class="panel mb-3">
+            <label class="form-label" for="member-filter">Find a member</label>
+            <input class="form-control mb-2" id="member-filter" placeholder="Type a name or code" />
+            <label class="form-label" for="MemberId">Member</label>
+            <select class="form-select" id="MemberId" form="checkout-form" name="MemberId">
+                <option value="">Choose</option>
+                @foreach (var member in Model.Members)
+                {
+                    <option value="@member.Id">@member.FullName · @member.MemberCode · @Money.Format(member.AccountBalance, currency)</option>
+                }
+            </select>
+        </div>
+        <form method="post" asp-action="AddPlan" class="panel mb-3">
+            <label class="form-label">Add a plan</label>
+            <div class="input-group">
+                <select class="form-select" name="planId">
+                    @foreach (var plan in Model.Plans)
+                    {
+                        <option value="@plan.Id">@plan.Name · @Money.Format(plan.Price, currency)</option>
+                    }
+                </select>
+                <button class="btn btn-dark" type="submit">Add</button>
+            </div>
+        </form>
+        <form method="post" asp-action="AddProduct" class="panel mb-3">
+            <label class="form-label">Add a product</label>
+            <div class="input-group">
+                <select class="form-select" name="productId">
+                    @foreach (var product in Model.Products)
+                    {
+                        <option value="@product.Id">@product.Name · stock @product.StockQuantity · @Money.Format(product.Price, currency)</option>
+                    }
+                </select>
+                <input class="form-control" name="quantity" type="number" min="1" value="1" style="max-width:5rem" />
+                <button class="btn btn-dark" type="submit">Add</button>
+            </div>
+        </form>
+        <form method="post" asp-action="AddCredit" class="panel">
+            <label class="form-label">Add account credit</label>
+            <div class="input-group">
+                <input class="form-control" name="amount" type="number" min="1" step="0.01" />
+                <button class="btn btn-dark" type="submit">Add</button>
+            </div>
+        </form>
+    </div>
+    <div class="col-lg-7">
+        <div class="panel">
+            <h2 class="h5">Cart</h2>
+            <table class="table" id="cart-table">
+                <tbody>
+                    @for (var index = 0; index < Model.Cart.Count; index++)
+                    {
+                        var line = Model.Cart[index];
+                        <tr>
+                            <td>@line.Name</td>
+                            <td>@line.Quantity</td>
+                            <td>@Money.Format(line.LineTotal, currency)</td>
+                            <td><button class="btn btn-sm btn-outline-danger remove-line" data-index="@index" type="button">Remove</button></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <p class="fs-5">Total @Money.Format(Model.Cart.Sum(line => line.LineTotal), currency)</p>
+            <form id="checkout-form" method="post" asp-action="Checkout">
+                <div class="mb-3">
+                    <label class="form-label" for="PaymentChannel">Payment</label>
+                    <select class="form-select" name="PaymentChannel" id="PaymentChannel">
+                        @if (Model.Profile.AcceptCash)
+                        {
+                            <option value="Cash">Cash</option>
+                        }
+                        @if (Model.Profile.AcceptCard)
+                        {
+                            <option value="Card">Card</option>
+                        }
+                        @if (Model.Profile.AcceptBalance)
+                        {
+                            <option value="Balance">Account balance</option>
+                        }
+                    </select>
+                    @if (!string.IsNullOrWhiteSpace(Model.Profile.CardTerminalNote))
+                    {
+                        <p class="small text-secondary mt-2">@Model.Profile.CardTerminalNote</p>
+                    }
+                </div>
+                <button class="btn btn-success" type="submit">Take payment</button>
+            </form>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        $("#member-filter").on("input", function () {
+            var query = $(this).val().toLowerCase();
+            $("#MemberId option").each(function () {
+                var match = $(this).val() === "" || $(this).text().toLowerCase().indexOf(query) >= 0;
+                $(this).toggle(match);
+            });
+        });
+
+        $(".remove-line").on("click", function () {
+            $.post("/Admin/Sales/Remove", { index: $(this).data("index") }, function () {
+                window.location.reload();
+            });
+        });
+    </script>
+}

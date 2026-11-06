@@ -1,0 +1,24 @@
+@model List<ActivityLog>
+@{
+    ViewData["Title"] = "Activity";
+}
+<div class="d-flex justify-content-between">
+    <h1 class="h3">Activity</h1>
+    <form method="post" asp-action="ClearOld" data-confirm="Remove log entries older than 90 days?">
+        <button class="btn btn-outline-dark btn-sm" type="submit">Clear old entries</button>
+    </form>
+</div>
+<input class="form-control my-3" data-table-filter="#activity-table" placeholder="Filter activity" />
+<table class="table bg-white" id="activity-table">
+    <thead><tr><th>When</th><th>Staff</th><th>Event</th></tr></thead>
+    <tbody>
+        @foreach (var log in Model)
+        {
+            <tr>
+                <td>@log.OccurredAt.ToLocalTime().ToString("dd MMM yyyy HH:mm")</td>
+                <td>@(log.StaffUser?.UserName ?? "—")</td>
+                <td>@log.Message</td>
+            </tr>
+        }
+    </tbody>
+</table>

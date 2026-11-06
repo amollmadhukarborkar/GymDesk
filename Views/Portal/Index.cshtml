@@ -1,0 +1,40 @@
+@model Member
+@{
+    ViewData["Title"] = "My account";
+    var active = ViewBag.Active as MemberPass;
+    var passes = ViewBag.Passes as List<MemberPass> ?? [];
+    var invoices = ViewBag.RecentInvoices as List<Invoice> ?? [];
+}
+<h1 class="h3">Hello, @Model.FirstName</h1>
+<p>Member code <strong>@Model.MemberCode</strong> · Balance @Money.Format(Model.AccountBalance, ViewData["Currency"] as string)</p>
+<div class="row g-3">
+    <div class="col-md-4"><div class="stat-card p-3"><div class="text-secondary">Current pass</div><div class="fs-5">@(active?.PlanName ?? "None")</div></div></div>
+    <div class="col-md-4"><div class="stat-card p-3"><div class="text-secondary">Expires</div><div class="fs-5">@(active is null ? "—" : active.ExpiresOn.ToString("dd MMM yyyy"))</div></div></div>
+    <div class="col-md-4"><div class="stat-card p-3"><div class="text-secondary">Recorded visits</div><div class="fs-5">@ViewBag.WorkoutCount</div></div></div>
+</div>
+<div class="mt-3 d-flex gap-2 flex-wrap">
+    <a class="btn btn-outline-dark" asp-action="Profile">Profile</a>
+    <a class="btn btn-outline-dark" asp-action="Invoices">Invoices</a>
+    <a class="btn btn-outline-dark" asp-action="Workouts">Workouts</a>
+    <a class="btn btn-dark" asp-action="Card">Member card</a>
+</div>
+<div class="row g-3 mt-1">
+    <div class="col-md-6">
+        <div class="panel">
+            <h2 class="h5">Passes</h2>
+            @foreach (var pass in passes)
+            {
+                <p class="mb-1">@pass.PlanName · until @pass.ExpiresOn.ToString("dd MMM yyyy") · @(pass.VisitsRemaining?.ToString() ?? "Unlimited") visits left</p>
+            }
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="panel">
+            <h2 class="h5">Recent invoices</h2>
+            @foreach (var invoice in invoices)
+            {
+                <p class="mb-1">@invoice.IssuedAt.ToLocalTime().ToString("dd MMM") · @invoice.Description · @Money.Format(invoice.Amount, ViewData["Currency"] as string)</p>
+            }
+        </div>
+    </div>
+</div>

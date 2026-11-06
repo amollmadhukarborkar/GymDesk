@@ -1,0 +1,50 @@
+@model HoursForm
+@{
+    ViewData["Title"] = "Hours";
+    var exceptions = ViewBag.Exceptions as List<OpeningException> ?? [];
+}
+<h1 class="h3">Opening hours</h1>
+<form method="post" asp-action="Save" class="panel mb-4">
+    <table class="table">
+        <thead><tr><th>Day</th><th>Closed</th><th>Opens</th><th>Closes</th></tr></thead>
+        <tbody>
+            @for (var i = 0; i < Model.Days.Count; i++)
+            {
+                <tr>
+                    <td>
+                        @WeekDays.Name(Model.Days[i].DayOfWeek)
+                        <input type="hidden" asp-for="Days[i].DayOfWeek" />
+                    </td>
+                    <td><input asp-for="Days[i].IsClosed" data-close-toggle /></td>
+                    <td><input class="form-control" asp-for="Days[i].OpensAt" type="time" /></td>
+                    <td><input class="form-control" asp-for="Days[i].ClosesAt" type="time" /></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <button class="btn btn-dark" type="submit">Save weekly hours</button>
+</form>
+<div class="panel">
+    <h2 class="h5">Date exceptions</h2>
+    <form method="post" asp-action="AddException" class="row g-2 mb-3">
+        <div class="col-md-3"><input class="form-control" type="date" name="ExceptionDate" required /></div>
+        <div class="col-md-2 form-check mt-2"><input class="form-check-input" type="checkbox" name="IsClosed" value="true" id="ex-closed" /><label class="form-check-label" for="ex-closed">Closed</label></div>
+        <div class="col-md-2"><input class="form-control" type="time" name="OpensAt" /></div>
+        <div class="col-md-2"><input class="form-control" type="time" name="ClosesAt" /></div>
+        <div class="col-md-3"><input class="form-control" name="Note" placeholder="Note" /></div>
+        <div class="col-auto"><button class="btn btn-dark" type="submit">Save date</button></div>
+    </form>
+    <ul>
+        @foreach (var item in exceptions)
+        {
+            <li class="mb-2">
+                @item.ExceptionDate.ToString("dd MMM yyyy")
+                @(item.IsClosed ? "closed" : $"{item.OpensAt:HH:mm}–{item.ClosesAt:HH:mm}")
+                @item.Note
+                <form method="post" asp-action="DeleteException" asp-route-id="@item.Id" class="d-inline">
+                    <button class="btn btn-link btn-sm" type="submit">Remove</button>
+                </form>
+            </li>
+        }
+    </ul>
+</div>

@@ -1,0 +1,21 @@
+@model StaffLoginInput
+@inject IWebHostEnvironment Env
+@{
+    ViewData["Title"] = "Staff sign in";
+}
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <form method="post" class="panel" asp-action="Login">
+            <h1 class="h3">Staff sign in</h1>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ReturnUrl" />
+            <div class="mb-3"><label class="form-label" asp-for="UserName"></label><input class="form-control" asp-for="UserName" /></div>
+            <div class="mb-3"><label class="form-label" asp-for="Password"></label><input class="form-control" asp-for="Password" /></div>
+            <button class="btn btn-dark w-100" type="submit">Open the desk</button>
+            @if (Env.IsDevelopment())
+            {
+                <p class="small text-secondary mt-3 mb-0">Local seed account: admin / Admin123! Change it before this site is shared.</p>
+            }
+        </form>
+    </div>
+</div>

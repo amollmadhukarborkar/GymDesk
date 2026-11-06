@@ -1,0 +1,21 @@
+@model List<ClassSlot>
+@{
+    ViewData["Title"] = "Schedule";
+}
+<h1 class="h3 mb-3">Class schedule</h1>
+@foreach (var day in WeekDays.Names)
+{
+    var slots = Model.Where(slot => slot.DayName == day).OrderBy(slot => slot.StartsAt).ToList();
+    if (slots.Count == 0)
+    {
+        continue;
+    }
+    <h2 class="h5 mt-3">@day</h2>
+    @foreach (var slot in slots)
+    {
+        <div class="panel mb-2" style="border-left: 6px solid @slot.ColorHex">
+            <strong>@slot.Title</strong>
+            <span class="text-secondary">@slot.StartsAt.ToString("HH:mm") – @slot.EndsAt.ToString("HH:mm")</span>
+        </div>
+    }
+}

@@ -1,0 +1,43 @@
+@model List<ClassSlot>
+@{
+    ViewData["Title"] = "Schedule";
+    var editing = ViewBag.Editing as ClassSlot;
+}
+<h1 class="h3">Class schedule</h1>
+<form method="post" asp-action="Save" class="panel mb-4">
+    <input type="hidden" name="Id" value="@(editing?.Id ?? 0)" />
+    <div class="row g-2">
+        <div class="col-md-4"><input class="form-control" name="Title" value="@editing?.Title" placeholder="Class name" required /></div>
+        <div class="col-md-2">
+            <select class="form-select" name="DayName">
+                @foreach (var day in WeekDays.Names)
+                {
+                    <option selected="@(editing?.DayName == day)">@day</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-2"><input class="form-control" name="StartsAt" type="time" value="@(editing?.StartsAt.ToString("HH:mm") ?? "07:00")" /></div>
+        <div class="col-md-2"><input class="form-control" name="EndsAt" type="time" value="@(editing?.EndsAt.ToString("HH:mm") ?? "08:00")" /></div>
+        <div class="col-md-2"><input class="form-control" name="ColorHex" type="color" value="@(editing?.ColorHex ?? "#0f766e")" /></div>
+    </div>
+    <button class="btn btn-dark mt-3" type="submit">Save class</button>
+</form>
+<table class="table bg-white">
+    <thead><tr><th>Class</th><th>Day</th><th>Time</th><th></th></tr></thead>
+    <tbody>
+        @foreach (var slot in Model)
+        {
+            <tr>
+                <td><span class="badge" style="background:@slot.ColorHex">&nbsp;</span> @slot.Title</td>
+                <td>@slot.DayName</td>
+                <td>@slot.StartsAt.ToString("HH:mm") – @slot.EndsAt.ToString("HH:mm")</td>
+                <td>
+                    <a asp-action="Index" asp-route-id="@slot.Id">Edit</a>
+                    <form method="post" asp-action="Delete" asp-route-id="@slot.Id" class="d-inline" data-confirm="Remove this class?">
+                        <button class="btn btn-link btn-sm" type="submit">Remove</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

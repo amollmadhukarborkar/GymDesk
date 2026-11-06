@@ -1,0 +1,16 @@
+@model List<ContactMessage>
+@{
+    ViewData["Title"] = "Messages";
+}
+<h1 class="h3">Messages</h1>
+@foreach (var message in Model)
+{
+    <article class="panel mb-3">
+        <h2 class="h6">@message.SenderName · @message.SenderEmail</h2>
+        <p class="small text-secondary">@message.ReceivedAt.ToLocalTime().ToString("dd MMM yyyy HH:mm")</p>
+        <p>@message.Body</p>
+        <form method="post" asp-action="Delete" asp-route-id="@message.Id">
+            <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+        </form>
+    </article>
+}

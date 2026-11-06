@@ -1,0 +1,53 @@
+﻿@model HomePage
+@{
+    ViewData["Title"] = "Home";
+    string HoursText(OpeningHour hour) => hour.IsClosed || hour.OpensAt is null
+        ? "Closed"
+        : $"{hour.OpensAt:HH:mm} – {hour.ClosesAt:HH:mm}";
+}
+<section class="hero mb-4">
+    <p class="mb-1">@Model.Profile.City</p>
+    <h1 class="display-6">@Model.Profile.BusinessName</h1>
+    <p class="lead mb-3">@Model.Profile.Tagline</p>
+    <a class="btn btn-light" asp-controller="Account" asp-action="Register">Become a member</a>
+    <a class="btn btn-outline-light" asp-action="Board">Lobby screen</a>
+</section>
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="panel">
+            <h2 class="h4">About</h2>
+            <p>@Model.Profile.About</p>
+            <p class="mb-0">Floor capacity: @Model.Profile.Capacity. Coaches on the team: @Model.TrainerCount.</p>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="panel">
+            <h2 class="h4">Hours</h2>
+            @if (Model.TodayException is not null)
+            {
+                <p class="mb-2"><strong>Today:</strong> @(Model.TodayException.IsClosed ? "Closed" : $"{Model.TodayException.OpensAt:HH:mm} – {Model.TodayException.ClosesAt:HH:mm}") @Model.TodayException.Note</p>
+            }
+            <ul class="list-unstyled mb-0">
+                @foreach (var hour in Model.Hours)
+                {
+                    <li class="d-flex justify-content-between border-bottom py-1">
+                        <span>@WeekDays.Name(hour.DayOfWeek)</span>
+                        <span>@HoursText(hour)</span>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="row g-3 mt-1">
+    @foreach (var plan in Model.Plans)
+    {
+        <div class="col-md-4">
+            <div class="panel h-100">
+                <h3 class="h5">@plan.Name</h3>
+                <p class="fs-4 mb-1">@Money.Format(plan.Price, Model.Profile.CurrencyCode)</p>
+                <p class="mb-0 text-secondary">@plan.ValidDays days · @(plan.VisitAllowance?.ToString() ?? "Unlimited") visits</p>
+            </div>
+        </div>
+    }
+</div>
