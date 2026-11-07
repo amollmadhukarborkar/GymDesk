@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using Microsoft.Data.SqlClient;
 using MySqlConnector;
 using Npgsql;
 
@@ -19,6 +20,20 @@ public static class DatabaseInitializer
 
     private static async Task EnsureDatabaseExistsAsync(string provider, string connectionString)
     {
+        if (provider.Equals("SqlServer", StringComparison.OrdinalIgnoreCase))
+        {
+            var builder = new SqlConnectionStringBuilder(connectionString);
+            var database = RequiredDatabaseName(builder.InitialCatalog);
+            builder.InitialCatalog = "master";
+            await using var connection = new SqlConnection(builder.ConnectionString);
+            await connection.OpenAsync();
+            await using var createDatabase = new SqlCommand(
+                $"IF DB_ID(N'{database}') IS NULL CREATE DATABASE [{database}]",
+                connection);
+            await createDatabase.ExecuteNonQueryAsync();
+            return;
+        }
+
         if (provider.Equals("PostgreSql", StringComparison.OrdinalIgnoreCase))
         {
             var builder = new NpgsqlConnectionStringBuilder(connectionString);

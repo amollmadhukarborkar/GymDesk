@@ -3,16 +3,33 @@ using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
 var provider = builder.Configuration["Database:Provider"] ?? "MySql";
-var connectionName = provider.Equals("PostgreSql", StringComparison.OrdinalIgnoreCase) ? "PostgreSql" : "MySql";
-var connectionString = builder.Configuration.GetConnectionString(connectionName)
-    ?? throw new InvalidOperationException($"Connection string '{connectionName}' is missing.");
+
+var connectionName = provider.Trim().ToLowerInvariant() switch
+{
+    "mysql" => "MySql",
+    "postgresql" => "PostgreSql",
+    "sqlserver" => "SqlServer",
+    _ => throw new InvalidOperationException(
+        $"Unsupported database provider: {provider}")
+};
+
+var connectionString = builder.Configuration
+    .GetConnectionString(connectionName)
+    ?? throw new InvalidOperationException(
+        $"Connection string '{connectionName}' is missing.");
+
 
 builder.Services.AddDbContext<GymDbContext>(options =>
 {
     if (provider.Equals("PostgreSql", StringComparison.OrdinalIgnoreCase))
     {
         options.UseNpgsql(connectionString);
+    }
+    else if (provider.Equals("SqlServer", StringComparison.OrdinalIgnoreCase))
+    {
+        options.UseSqlServer(connectionString);
     }
     else
     {
@@ -77,7 +94,7 @@ try
 catch (Exception exception)
 {
     throw new InvalidOperationException(
-        "Gym Desk could not reach the database. Start MySQL or PostgreSQL, then check Database:Provider and the matching connection string.",
+        "Gym Desk could not reach the database. Start MySQL, PostgreSQL, or SQL Server, then check Database:Provider and the matching connection string.",
         exception);
 }
 
